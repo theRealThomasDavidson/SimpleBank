@@ -59,7 +59,7 @@ public class SavingsAccount {
 		SavingsAccount.idCounter = idCounter;
 	}
 	public static synchronized int createID(){
-		idCounter += 1;
+		idCounter += 2;
 	    return idCounter;
 	}
 	public String toString(int i) {

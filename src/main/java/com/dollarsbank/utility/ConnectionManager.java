@@ -29,10 +29,9 @@ private static Connection connection = null;
 		String username = props.getProperty("username");
 		String password = props.getProperty("password");
 		
-		
 		// finally, establish the connection
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName("com.mysql.cj.jdbc.Driver");
 			connection = DriverManager.getConnection(url, username, password);
 			
 		} catch(SQLException e) {
