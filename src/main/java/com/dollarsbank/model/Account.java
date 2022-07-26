@@ -1,5 +1,7 @@
 package com.dollarsbank.model;
 
+import com.dollarsbank.utility.ColorsUtility;
+
 public class Account {
 
 	private int id;
@@ -64,7 +66,7 @@ public class Account {
 	public String toString(int i) {
 		return "--------------\n" + "\t".repeat(i) + "Checking Account\n" 
 					+ "\t".repeat(i+1)+ "Account Number:\t" + this.account_number+ "\n"
-					+ "\t".repeat(i+1) + "Owner: " + customer.getName() + "\n"
+					+ "\t".repeat(i+1) + ColorsUtility.toColor("pink", "Owner: " + customer.getName() )+ "\n"
 					+ "\t".repeat(i+1) + "Balance: " + amount + " \n--------------\n";
 	}
 }

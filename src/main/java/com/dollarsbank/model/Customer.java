@@ -33,7 +33,6 @@ public class Customer {
 		this.password = password;
 		this.savingsAccounts = new HashMap<Integer, SavingsAccount>();
 		this.accounts = new HashMap<Integer, Account>();
-		this.id = createID();
 	}
 
 	public static synchronized int createID(){
