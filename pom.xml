@@ -3,17 +3,57 @@
   <groupId>com.dollarsbank</groupId>
   <artifactId>DollarsBankApplication</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <name>DollarsBank</name>
+  <description>Dikkars bank console application</description>
+  <packaging>jar</packaging>
   
   <dependencies>
   	<dependency>
 	  <groupId>mysql</groupId>
 	  <artifactId>mysql-connector-java</artifactId>
 	  <version>8.0.29</version>
+    <scope>compile</scope>
 	</dependency>
   </dependencies>
   <properties>
      <maven.compiler.source>1.8</maven.compiler.source>
      <maven.compiler.target>1.8</maven.compiler.target>
-</properties>
+  </properties>
+ <build>
+  <plugins>
+    <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-dependency-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+                <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+                <outputDirectory>target/lib</outputDirectory>
+                <overWriteReleases>false</overWriteReleases>
+                <overWriteSnapshots>false</overWriteSnapshots>
+                <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-jar-plugin</artifactId>
+    <configuration>
+        <archive>
+            <manifest>
+                <addClasspath>true</addClasspath>
+                <classpathPrefix>lib/</classpathPrefix>
+                <mainClass>DollarsBankApplication</mainClass>
+            </manifest>
+        </archive>
+    </configuration>
+</plugin>
+  </plugins>
+</build>
 
 </project>
