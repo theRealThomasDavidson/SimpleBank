@@ -61,7 +61,21 @@ public class Transaction {
 		this.amount = amount;
 	}
 
+	@Override
+	public String toString() {
+		return "Transaction [id=" + id + ", cust_id=" + cust_id + ", acc_id=" + acc_id + ", amount=" + amount + "]";
+	}
+
 	public String toString(int indent, Customer cust, Account acc) {
+		String message = "##############\n" + "\t".repeat(indent) + "Transaction \n" 
+				+ "\t".repeat(indent+1)+ "Customer:\t" + cust.getName() + "\n"
+				+ "\t".repeat(indent+1)+ "Account:\t" + acc.getAccount_number()+ "\n"
+				+ "\t".repeat(indent+1)+ "Amount:\t"
+				+ ColorsUtility.toColor(this.amount >= 0? "green" : "red", String.valueOf(this.amount)) + "\n";
+		message += "##############";
+		return message;
+	}
+	public String toString(int indent, Customer cust, SavingsAccount acc) {
 		String message = "##############\n" + "\t".repeat(indent) + "Transaction \n" 
 				+ "\t".repeat(indent+1)+ "Customer:\t" + cust.getName() + "\n"
 				+ "\t".repeat(indent+1)+ "Account:\t" + acc.getAccount_number()+ "\n"

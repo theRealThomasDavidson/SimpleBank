@@ -19,7 +19,7 @@ import com.dollarsbank.utility.ConnectionManager;
 public class DollarsBankController {
 	
 	private static Connection conn = ConnectionManager.getConnection();
-	private static List<Customer> allCust = getAllCustomers();
+	private static Customer loggedIn;
 	static {
 		Customer.setCounter(getCustIdRange());
 		int max = getAccountIdRange();
@@ -27,7 +27,13 @@ public class DollarsBankController {
 		Account.setIdCounter(max+1);
 		Transaction.setCounter(getTransIdRange());
 	}
-			
+	public static void logIn(Customer cust) {
+		DollarsBankController.loggedIn = cust;
+	}
+	public static void logOut() {
+		DollarsBankController.loggedIn = null;
+	}
+	
 	public static List<Customer> getAllCustomers() {
 		try {
 			Statement stmt = conn.createStatement();
@@ -72,6 +78,51 @@ public class DollarsBankController {
 		}
 		return null;
 	}
+	
+	public static Account newAccount(Account account) {
+		try {
+			PreparedStatement pstmt = conn.prepareStatement("insert into `account` "
+					+ "(id, cust_id, account_number, balance, account_type) "
+					+ "values (?, ? ,?, ?, 'checking')");
+
+			pstmt.setInt(1, account.getId());
+			pstmt.setInt(2, account.getCustomer().getId());
+			pstmt.setString(3, account.getAccount_number());
+			pstmt.setFloat(4, account.getAmount());
+			int count = pstmt.executeUpdate();
+			if(count > 0) {
+				return account;
+			}
+			return null;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			System.out.println("Could NOT create new account in D/B :(");
+		}
+		return null;
+	}
+	public static SavingsAccount newSavingsAccount(SavingsAccount account) {
+		try {
+			PreparedStatement pstmt = conn.prepareStatement("insert into `account` "
+					+ "(id, cust_id, account_number, balance, account_type) "
+					+ "values (?, ? ,?, ?, 'savings')");
+
+			pstmt.setInt(1, account.getId());
+			pstmt.setInt(2, account.getCustomer().getId());
+			pstmt.setString(3, account.getAccount_number());
+			pstmt.setFloat(4, account.getAmount());
+			int count = pstmt.executeUpdate();
+			if(count > 0) {
+				return account;
+			}
+			return null;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			System.out.println("Could NOT create new account in D/B :(");
+		}
+		return null;
+	}
+	
+	
 	public static List<Account> findAccountsByCustomer(Customer cust) {
 		try {
 			PreparedStatement pstmt = conn.prepareStatement("select * from account a where a.cust_id = ? and a.account_type = 'checking'");
@@ -149,7 +200,6 @@ public class DollarsBankController {
 	public static Customer findCustomerByName(String name) {
 		try {
 			PreparedStatement pstmt = conn.prepareStatement("select * from customer c where c.username = ?");
-			int id;
 			pstmt.setString(1, name);
 			ResultSet rs = pstmt.executeQuery();
 			Customer cust;
@@ -236,5 +286,79 @@ public class DollarsBankController {
 			System.out.println("Could NOT create new customer in D/B :(");
 		}
 		return false;
+	}
+	
+	public static List<Transaction>findTransByCustomer(Customer cust, int limit) {
+		try {
+			PreparedStatement pstmt = conn.prepareStatement("select * from `transaction` t "
+					+ "where t.cust_id = ? "
+					+ "order by t.id desc limit ?");
+			pstmt.setInt(1, cust.getId());
+			pstmt.setInt(2, limit);
+			ResultSet rs = pstmt.executeQuery();
+			List<Transaction> ret = new ArrayList<Transaction>();
+			while(rs.next()) {
+				ret.add(new Transaction(rs.getInt("id"), rs.getInt("cust_id"), rs.getInt("acc_id"), rs.getFloat("amount")));
+			}
+			return ret;
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			System.out.println("Could NOT find transactions in D/B :(");
+		}
+		return new ArrayList<Transaction>();
+	}
+	
+	public static Account findAccountById(int id) {
+		try {
+			PreparedStatement pstmt = conn.prepareStatement("select * from `account` a "
+					+ "where a.id = ?");
+			pstmt.setInt(1, id);
+			ResultSet rs = pstmt.executeQuery();
+			Account ret;
+			if(rs.next()) {
+				if (!rs.getString("account_type").equalsIgnoreCase("checking")) {
+					return null;
+				}
+				ret = new Account(
+						rs.getInt("id"), 
+						rs.getString("account_number"), 
+						rs.getFloat("balance"),
+						DollarsBankController.loggedIn);
+			}
+			else {return null;}
+			return ret;
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			System.out.println("Could NOT find Account in D/B :(");
+		}
+		return null;
+	}
+	public static SavingsAccount findSavingAccountById(int id) {
+		try {
+			PreparedStatement pstmt = conn.prepareStatement("select * from `account` a "
+					+ "where a.id = ?");
+			pstmt.setInt(1, id);
+			ResultSet rs = pstmt.executeQuery();
+			SavingsAccount ret;
+			if(rs.next()) {
+				if (!rs.getString("account_type").equalsIgnoreCase("savings")) {
+					return null;
+				}
+				ret = new SavingsAccount(
+						rs.getInt("id"), 
+						rs.getString("account_number"), 
+						rs.getFloat("balance"),
+						DollarsBankController.loggedIn);
+			}
+			else {return null;}
+			return ret;
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			System.out.println("Could NOT find Account in D/B :(");
+		}
+		return null;
 	}
 }

@@ -3,9 +3,7 @@ package com.dollarsbank.utility;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Scanner;
-import java.util.Set;
 
 import com.dollarsbank.controller.DollarsBankController;
 import com.dollarsbank.model.Account;
@@ -64,7 +62,6 @@ public class ConsolePrinterUtility {
 	
 	
 	public static void menu(Map<String, ProcessingMethod> options) {
-		int max = options.size();
 		Map<Integer, String> choices = new HashMap<Integer, String>();
 		Integer ndx = 1;
 		for (String i : options.keySet()) {
@@ -117,6 +114,7 @@ public class ConsolePrinterUtility {
 				   if (cust == null){return;}
 				   if (cust.getPassword().equals( pass)) {
 					   System.out.println("Logged in.");
+					   DollarsBankController.logIn(cust);
 					   home_menu(cust);
 				   }
 				   System.out.println("Didn't log in.");
@@ -144,6 +142,28 @@ public class ConsolePrinterUtility {
 				   }
 			   }
 			});
+		
+		home_menu.put("View Transactions", new ProcessingMethod() {
+			public void method() {
+				List<Transaction> transactions = DollarsBankController.findTransByCustomer(cust, 5);
+				for (Transaction trans : transactions) {
+					Account acct = DollarsBankController.findAccountById(trans.getAcc_id());
+					if(acct == null) {
+						SavingsAccount sacct = DollarsBankController.findSavingAccountById(trans.getAcc_id());
+						if(sacct == null) {
+							System.out.println("Account not Found");
+							continue;
+						}
+						System.out.println(trans.toString(0, cust, sacct));
+						continue;
+					}
+					System.out.println(trans.toString(0, cust, acct));
+					continue;
+				}
+				return;
+			}}
+		);
+		
 		home_menu.put("Make Withdrawl", new ProcessingMethod() {
 			   public void method() { 
 				   
@@ -235,7 +255,7 @@ public class ConsolePrinterUtility {
 					   }
 					   update.setAmount(update.getAmount() + amount);
 					   if(DollarsBankController.updateAccountBalance(update)) {
-						   System.out.println("Withdrawl successful :)\n" + update.toString(0));
+						   System.out.println("Deposit successful :)\n" + update.toString(0));
 						   DollarsBankController.newTransaction(
 								   new Transaction(
 										   update.getCustomer().getId(),
@@ -385,7 +405,28 @@ public class ConsolePrinterUtility {
 			   
 			   }
 			});
+		home_menu.put("New Checking account", new ProcessingMethod() {
+			   public void method() {
+				   
+				   System.out.println("New Checking Account:");
+				   String acc_num = inputString("What is the new account number:\t");
+				   Float deposit = inputFloat("What is the Initial Deposit:\t");
+				   Account acc = new Account(acc_num, deposit, cust);
+				   System.out.println(DollarsBankController.newAccount(acc).toString(0));
+			   }
+			});
+		home_menu.put("New Savings account", new ProcessingMethod() {
+			   public void method() {
+				   
+				   System.out.println("New Savings Account:");
+				   String acc_num = inputString("What is the new account number:\t");
+				   Float deposit = inputFloat("What is the Initial Deposit:\t");
+				   SavingsAccount acc = new SavingsAccount(acc_num, deposit, cust);
+				   System.out.println(DollarsBankController.newSavingsAccount(acc).toString(0));
+			   }
+			});
 		menu(home_menu);
+		DollarsBankController.logOut();
 		System.out.println("Logging out!");
 		}
 		
