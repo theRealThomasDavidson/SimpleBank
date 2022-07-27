@@ -13,6 +13,7 @@ import java.util.Map;
 import com.dollarsbank.model.Account;
 import com.dollarsbank.model.Customer;
 import com.dollarsbank.model.SavingsAccount;
+import com.dollarsbank.model.Transaction;
 import com.dollarsbank.utility.ConnectionManager;
 
 public class DollarsBankController {
@@ -24,6 +25,7 @@ public class DollarsBankController {
 		int max = getAccountIdRange();
 		SavingsAccount.setIdCounter(max);
 		Account.setIdCounter(max+1);
+		Transaction.setCounter(getTransIdRange());
 	}
 			
 	public static List<Customer> getAllCustomers() {
@@ -104,6 +106,46 @@ public class DollarsBankController {
 		return null;
 		
 	}
+	
+	
+	public static boolean updateAccountBalance(SavingsAccount account) {
+		try {
+			PreparedStatement pstmt = conn.prepareStatement("update `account` a set a.balance = ? where a.id = ?");
+			pstmt.setFloat(1, account.getAmount());
+			pstmt.setFloat(2, account.getId());
+			
+			int count = pstmt.executeUpdate();
+			
+			if(count > 0) {
+				return true;
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Could NOT find account in D/B :(");
+		}
+		return false;
+		
+	}
+	
+	public static boolean updateAccountBalance(Account account) {
+		try {
+			PreparedStatement pstmt = conn.prepareStatement("update `account` a set a.balance = ? where a.id = ?");
+			pstmt.setFloat(1, account.getAmount());
+			pstmt.setFloat(2, account.getId());
+			
+			int count = pstmt.executeUpdate();
+			
+			if(count > 0) {
+				return true;
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Could NOT find account in D/B :(");
+		}
+		return false;
+	}	
+		
+	
 	public static Customer findCustomerByName(String name) {
 		try {
 			PreparedStatement pstmt = conn.prepareStatement("select * from customer c where c.username = ?");
@@ -158,5 +200,41 @@ public class DollarsBankController {
 		}
 		
 		return 0;
+	}
+	public static int getTransIdRange() {
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("select max(id) as max from `transaction`");
+			int max = 0;
+			if(rs.next()) {
+				max = rs.getInt("max");
+			}
+			return max;
+		} catch(SQLException e) {
+			System.out.println("Could NOT set customer ids in D/B :(");
+		}
+		
+		return 0;
+	}
+	public static Boolean newTransaction(Transaction trans) {
+		try {
+			PreparedStatement pstmt = conn.prepareStatement("insert into transaction "
+					+ "(id, cust_id, acc_id, amount) "
+					+ "VALUES(?, ?, ?, ?)");
+
+			pstmt.setInt(1, trans.getId());
+			pstmt.setInt(2, trans.getCust_id());
+			pstmt.setInt(3, trans.getAcc_id());
+			pstmt.setFloat(4, trans.getAmount());
+			int count = pstmt.executeUpdate();
+			if(count > 0) {
+				return true;
+			}
+			return null;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			System.out.println("Could NOT create new customer in D/B :(");
+		}
+		return false;
 	}
 }

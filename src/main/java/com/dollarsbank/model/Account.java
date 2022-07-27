@@ -6,12 +6,12 @@ public class Account {
 
 	private int id;
 	private String account_number;
-	private double amount;
+	private float amount;
 	private Customer customer;
 	
 	private static int idCounter = 0;
 	
-	public Account(int id, String account_number, double amount, Customer customer) {
+	public Account(int id, String account_number, float amount, Customer customer) {
 		super();
 		this.id = id;
 		this.account_number = account_number;
@@ -19,7 +19,7 @@ public class Account {
 		this.setCustomer(customer);
 	}
 	
-	public Account(String account_number, double amount, Customer customer) {
+	public Account(String account_number, float amount, Customer customer) {
 		super();
 		this.id = this.createID();
 		this.account_number = account_number;
@@ -39,10 +39,10 @@ public class Account {
 		this.account_number = account_number;
 	}
 	
-	public double getAmount() {
+	public float getAmount() {
 		return amount;
 	}
-	public void setAmount(double amount) {
+	public void setAmount(float amount) {
 		this.amount = amount;
 	}
 	public Customer getCustomer() {

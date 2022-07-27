@@ -4,13 +4,13 @@ public class SavingsAccount {
 	
 	private int id;
 	private String account_number;
-	private double amount;
+	private float amount;
 	private Customer customer;
 	
 	private static int idCounter = 0;
 	
 
-	public SavingsAccount(int id, String account_number, double amount, Customer customer) {
+	public SavingsAccount(int id, String account_number, float amount, Customer customer) {
 		super();
 		this.id = id;
 		this.account_number = account_number;
@@ -18,7 +18,7 @@ public class SavingsAccount {
 		this.setCustomer(customer);
 	}
 	
-	public SavingsAccount(String account_number, double amount, Customer customer) {
+	public SavingsAccount(String account_number, float amount, Customer customer) {
 		super();
 		this.id = this.createID();
 		this.account_number = account_number;
@@ -38,10 +38,10 @@ public class SavingsAccount {
 		this.account_number = account_number;
 	}
 	
-	public double getAmount() {
+	public float getAmount() {
 		return amount;
 	}
-	public void setAmount(double amount) {
+	public void setAmount(float amount) {
 		this.amount = amount;
 	}
 	public Customer getCustomer() {
