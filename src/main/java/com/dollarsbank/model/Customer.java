@@ -31,9 +31,8 @@ public class Customer {
 		this.id = id;
 		this.name = name;
 		this.password = password;
-		this.savingsAccounts = new HashMap<Integer, SavingsAccount>();
-		this.accounts = new HashMap<Integer, Account>();
-		this.id = createID();
+		this.savingsAccounts = savingsAccounts;
+		this.accounts = accounts;
 	}
 
 	public static synchronized int createID(){

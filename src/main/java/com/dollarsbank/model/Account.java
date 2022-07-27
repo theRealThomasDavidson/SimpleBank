@@ -1,15 +1,17 @@
 package com.dollarsbank.model;
 
+import com.dollarsbank.utility.ColorsUtility;
+
 public class Account {
 
 	private int id;
 	private String account_number;
-	private double amount;
+	private float amount;
 	private Customer customer;
 	
 	private static int idCounter = 0;
 	
-	public Account(int id, String account_number, double amount, Customer customer) {
+	public Account(int id, String account_number, float amount, Customer customer) {
 		super();
 		this.id = id;
 		this.account_number = account_number;
@@ -17,7 +19,7 @@ public class Account {
 		this.setCustomer(customer);
 	}
 	
-	public Account(String account_number, double amount, Customer customer) {
+	public Account(String account_number, float amount, Customer customer) {
 		super();
 		this.id = this.createID();
 		this.account_number = account_number;
@@ -37,10 +39,10 @@ public class Account {
 		this.account_number = account_number;
 	}
 	
-	public double getAmount() {
+	public float getAmount() {
 		return amount;
 	}
-	public void setAmount(double amount) {
+	public void setAmount(float amount) {
 		this.amount = amount;
 	}
 	public Customer getCustomer() {
@@ -58,13 +60,13 @@ public class Account {
 		Account.idCounter = idCounter;
 	}
 	public static synchronized int createID(){
-		idCounter += 1;
+		idCounter += 2;
 	    return idCounter;
 	}
 	public String toString(int i) {
 		return "--------------\n" + "\t".repeat(i) + "Checking Account\n" 
 					+ "\t".repeat(i+1)+ "Account Number:\t" + this.account_number+ "\n"
-					+ "\t".repeat(i+1) + "Owner: " + customer.getName() + "\n"
+					+ "\t".repeat(i+1) + ColorsUtility.toColor("pink", "Owner: " + customer.getName() )+ "\n"
 					+ "\t".repeat(i+1) + "Balance: " + amount + " \n--------------\n";
 	}
 }
